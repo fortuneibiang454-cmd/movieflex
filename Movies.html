@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MovieFlix</title>
+  <style>
+    *{margin:0; padding:0; box-sizing:border-box; font-family:Arial, sans-serif;}
+    body{background:#141414; color:white; padding-top:80px;}
+
+    nav{
+      display:flex; justify-content:space-between; align-items:center; 
+      padding:20px 50px; background:#000; 
+      position:fixed; width:100%; top:0; left:0; z-index:10;
+    }
+    nav h1{color:#e50914; font-size:28px;}
+    nav a{color:white; margin:0 15px; text-decoration:none;}
+    nav a:hover{color:#e50914;}
+
+    .hero{
+      height:90vh; 
+      background: linear-gradient(to right, rgba(0,0,0,0.8), transparent 60%), 
+                  url('https://image.tmdb.org/t/p/original/t6HIqrRAclMCA60NsSmeqe9RmNV.jpg') center/cover no-repeat;
+      display:flex; align-items:center; padding:0 50px;
+    }
+    .hero h2{font-size:48px; margin-bottom:20px;}
+    .watch-button{background: #e50914; color: white; padding:12px 24px; border:none; border-radius:5px; font-weight:bold; margin-right:10px; font-size:16px;}
+    .info-button{background: rgba(109,109,110,0.7); color: white; padding:12px 24px; border:none; border-radius:5px; font-weight:bold; font-size:16px;}
+
+    .movies{padding:50px;}
+    .movies h3{font-size:24px; margin-bottom:20px;}
+    .movie-grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(200px, 1fr)); gap:20px;}
+    .movie-card{background:#222; border-radius:8px; overflow:hidden; transition:transform 0.3s;}
+    .movie-card:hover{transform:scale(1.05);}
+    .movie-card img{
+      width:100%; 
+      height:300px; 
+      object-fit:cover; 
+      display:block; 
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <h1>MovieFlix</h1>
+    <div>
+      <a href="#">Home</a>
+      <a href="#">Movies</a>
+      <a href="#">Series</a>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div>
+      <h2>Avatar</h2>
+<button class="watch-button" onclick="window.open('https://www.youtube.com/watch?v=d9MyW72ELq0', '_blank')">Watch Now</button>
+<button class="info-button" onclick="alert('Avatar: A marine on an alien planet')">More Info</button> 
+    </div>
+  </section>
+
+  <section class="movies">
+    <h3>Trending Now</h3>
+    <div class="movie-grid">
+      <div class="movie-card">
+        <img src="https://image.tmdb.org/t/p/w500/1g0dhYtq4irTY1GPXvft6k4YLjm.jpg" alt="Avatar">
+      </div>
+      <div class="movie-card">
+        <img src="https://image.tmdb.org/t/p/w500/r2J02Z2OpNTv8ysPPL4DbUDrumN.jpg" alt="Movie 2">
+      </div>
+      <div class="movie-card">
+        <img src="https://image.tmdb.org/t/p/w500/6DrHO1jr3qVrViUO6s6kFiAGM7.jpg" alt="Movie 3">
+      </div>
+      <div class="movie-card">
+        <img src="https://image.tmdb.org/t/p/w500/pIkRyD18kl4Fhrujh52PPpRwLg.jpg" alt="Movie 4">
+      </div>
+    </div>
+  </section>
+</body>
+</html>
