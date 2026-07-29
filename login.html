@@ -65,5 +65,26 @@
      .catch((error) => { alert(error.message); });
   });
 </script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyDummyKeyForNow",
+    authDomain: "movieflex-482dd.firebaseapp.com",
+    databaseURL: "https://movieflex-482dd-default-rtdb.firebaseio.com/",
+    projectId: "movieflex-482dd",
+  };
+  firebase.initializeApp(firebaseConfig);
+
+  document.querySelector('form').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const email = document.querySelector('input[type=email]').value;
+    const password = document.querySelector('input[type=password]').value;
+    
+    firebase.auth().signInWithEmailAndPassword(email, password)
+     .then(() => { window.location.href = "index.html"; })
+     .catch((error) => { alert("Error: " + error.message); });
+  });
+</script>
 </body>
          </html>
