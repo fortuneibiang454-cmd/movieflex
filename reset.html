@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Reset Password - MovieFlix</title>
+  <style>body { background:#141414; color:white; font-family:Arial; display:flex; justify-content:center; align-items:center; height:100vh; margin:0; } .box { background:#222; padding:30px; border-radius:10px; width:320px; text-align:center; } input, button { width:100%; padding:12px; margin:10px 0; border:none; border-radius:5px; box-sizing:border-box; } button { background:#E50914; color:white; font-weight:bold; cursor:pointer; } a { color:#E50914; text-decoration:none; }</style>
+</head>
+<body>
+  <div class="box">
+    <h2>Reset Password</h2>
+    <input type="email" id="email" placeholder="Enter your email">
+    <button onclick="reset()">Send Reset Link</button>
+    <p><a href="login.html">Back to Login</a></p>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getAuth, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    
+    const firebaseConfig = {
+      apiKey: "AIzaSyBPMIyM0HHN27aW8PvkIN0RNzFk1g-l2Co",
+      authDomain: "movieflex-482dd.firebaseapp.com",
+      databaseURL: "https://movieflex-482dd-default-rtdb.firebaseio.com",
+      projectId: "movieflex-482dd",
+      storageBucket: "movieflex-482dd.firebasestorage.app",
+      messagingSenderId: "646299297093",
+      appId: "1:646299297093:web:6fb9822774507d3f20ca2c"
+    };
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    window.reset = () => {
+      const email = document.getElementById('email').value;
+      sendPasswordResetEmail(auth, email)
+        .then(() => alert("Reset email sent! Check your inbox"))
+        .catch(err => alert(err.message));
+    }
+  </script>
+</body>
+</html>
