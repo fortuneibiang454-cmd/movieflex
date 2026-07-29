@@ -37,5 +37,30 @@
         .catch(err => alert(err.message));
     }
   </script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+<script>
+  const firebaseConfig = { /* same as above */ };
+  firebase.initializeApp(firebaseConfig);
+
+  document.querySelector('form').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const email = document.querySelector('input[type=email]').value;
+    const password = document.querySelector('input[type=password]').value;
+    
+    firebase.auth().createUserWithEmailAndPassword(email, password)
+     .then((userCredential) => {
+        // Save user to database
+        firebase.database().ref('users/' + userCredential.user.uid).set({
+          email: email,
+          createdAt: new Date().toISOString()
+        });
+        alert("Account Created!");
+        window.location.href = "index.html";
+     })
+     .catch((error) => { alert("Error: " + error.message); });
+  });
+</script>
 </body>
   </html>
