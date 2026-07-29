@@ -65,26 +65,30 @@
      .catch((error) => { alert(error.message); });
   });
 </script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
-<script>
+  <script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
   const firebaseConfig = {
-    apiKey: "AIzaSyDummyKeyForNow",
+    apiKey: "AIzaSyBPMIyM0HHN27aW8PvkIN0RNzFk1g-l2Co",
     authDomain: "movieflex-482dd.firebaseapp.com",
-    databaseURL: "https://movieflex-482dd-default-rtdb.firebaseio.com/",
+    databaseURL: "https://movieflex-482dd-default-rtdb.firebaseio.com",
     projectId: "movieflex-482dd",
+    storageBucket: "movieflex-482dd.firebasestorage.app",
+    messagingSenderId: "646299297093",
+    appId: "1:646299297093:web:6fb9822774507d3f20ca2c"
   };
-  firebase.initializeApp(firebaseConfig);
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
 
   document.querySelector('form').addEventListener('submit', (e) => {
     e.preventDefault();
     const email = document.querySelector('input[type=email]').value;
     const password = document.querySelector('input[type=password]').value;
     
-    firebase.auth().signInWithEmailAndPassword(email, password)
+    signInWithEmailAndPassword(auth, email, password)
      .then(() => { window.location.href = "index.html"; })
-     .catch((error) => { alert("Error: " + error.message); });
+     .catch((error) => { alert("Login Failed: " + error.message); });
   });
-</script>
-</body>
+  </script>
          </html>
