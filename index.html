@@ -16,6 +16,9 @@
     .card { background:var(--card); padding:10px; border-radius:8px; cursor:pointer; }
     .card img { width:100%; border-radius:5px; }
     #details { margin-top:30px; padding:20px; background:var(--card); border-radius:10px; display:none; }
+    .nav { display:flex; justify-content:center; gap:10px; margin:20px 0; flex-wrap:wrap; }
+.nav button { padding:10px 15px; background:#333; color:var(--text); border:none; border-radius:5px; cursor:pointer; width:auto; }
+.nav button:hover { background:#e50914; }
   </style>
 </head>
 <body>
@@ -41,7 +44,14 @@
       <button onclick="logout()">Logout</button>
     </div>
   </div>
-  
+  <div class="nav">
+  <button onclick="loadCategory('avengers')">Trending</button>
+  <button onclick="loadCategory('action')">Action</button>
+  <button onclick="loadCategory('comedy')">Comedy</button>
+  <button onclick="loadCategory('horror')">Horror</button>
+  <button onclick="loadCategory('romance')">Romance</button>
+  <button onclick="loadCategory('anime')">Anime</button>
+</div>
   <div style="text-align:center; margin:20px 0;">
     <input type="text" id="searchInput" placeholder="Search movies..." style="width:300px; padding:10px;">
     <button onclick="searchMovies()">Search</button>
