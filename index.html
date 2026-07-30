@@ -148,15 +148,16 @@ function displayResults(movies) {
   document.getElementById('details').style.display = 'none';
   if(movies){
     movies.forEach(movie => {
+      const poster = movie.Poster !== 'N/A' ? movie.Poster : 'https://via.placeholder.com/200x300/222/fff?text=No+Image';
       resultsDiv.innerHTML += `
         <div class="card" onclick="showMovieDetails('${movie.imdbID}')">
-          <img src="${movie.Poster !== 'N/A' ? movie.Poster : 'https://via.placeholder.com/200x300'}">
+          <img src="${poster}" onerror="this.src='https://via.placeholder.com/200x300/222/fff?text=No+Image'">
           <h3>${movie.Title}</h3>
         </div>
       `;
     });
   }
-}
+  }
 </script>
 </body>
   </html>
