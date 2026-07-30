@@ -130,18 +130,73 @@ function loadCategory(query) {
 }
 window.loadCategory = loadCategory;
 
-async function showMovieDetails(imdbID) {
+<script type="module">
+//... keep all your firebase code above
+
+// ADD YOUTUBE API KEY - Get free key from https://console.cloud.google.com
+const YOUTUBE_API_KEY = "PASTE_YOUR_YOUTUBE_KEY_HERE"; // Optional but better results
+
+window.showMovieDetails = async (imdbID) => {
   const res = await fetch(`https://www.omdbapi.com/?i=${imdbID}&apikey=${OMDB_API_KEY}`);
   const movie = await res.json();
+
+  // 1. GET YOUTUBE TRAILER
+  const trailerId = await getTrailer(movie.Title);
+
   document.getElementById('details').style.display = 'block';
   document.getElementById('details').innerHTML = `
-    <img src="${movie.Poster}" style="width:200px;">
-    <h2>${movie.Title} (${movie.Year})</h2>
-    <p><b>Rating:</b> ${movie.imdbRating}/10</p>
-    <p><b>Plot:</b> ${movie.Plot}</p>
+    <div style="display:flex; gap:20px; flex-wrap:wrap;">
+      <img src="${movie.Poster}" style="width:200px; border-radius:8px;">
+      <div style="flex:1; min-width:250px;">
+        <h2>${movie.Title} (${movie.Year})</h2>
+        <p><b>Rating:</b> ⭐ ${movie.imdbRating}/10</p>
+        <p><b>Genre:</b> ${movie.Genre}</p>
+        <p><b>Runtime:</b> ${movie.Runtime}</p>
+        <p><b>Plot:</b> ${movie.Plot}</p>
+
+        <!-- BUTTON 1: WATCH TRAILER -->
+        ${trailerId? `<button onclick="playTrailer('${trailerId}')" style="background:#FF0000; margin-right:10px;">▶️ Watch Trailer</button>` : ''}
+
+        <!-- BUTTON 2: WATCH NOW - Links to streaming -->
+        <button onclick="searchStreaming('${movie.Title}')" style="background:#e50914;">📺 Watch Now</button>
+      </div>
+    </div>
+
+    <!-- TRAILER PLAYER - hidden until clicked -->
+    <div id="trailerPlayer" style="margin-top:20px; display:none;">
+      <iframe id="trailerFrame" width="100%" height="400" src="" frameborder="0" allowfullscreen></iframe>
+    </div>
   `;
 }
 
+// GET TRAILER FROM YOUTUBE
+async function getTrailer(title) {
+  try {
+    // Simple search method - no API key needed
+    const res = await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&q=${title}+official+trailer&key=${YOUTUBE_API_KEY}&type=video&maxResults=1`);
+    const data = await res.json();
+    return data.items[0]?.id?.videoId;
+  } catch {
+    return null;
+  }
+}
+
+// PLAY TRAILER
+window.playTrailer = (videoId) => {
+  const player = document.getElementById('trailerPlayer');
+  const frame = document.getElementById('trailerFrame');
+  frame.src = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
+  player.style.display = 'block';
+  player.scrollIntoView({behavior: 'smooth'});
+}
+
+// SEARCH STREAMING LINKS
+window.searchStreaming = (title) => {
+  // Opens Google search for where to watch
+  const url = `https://www.google.com/search?q=watch+${encodeURIComponent(title)}+online`;
+  window.open(url, '_blank');
+}
+</script>
 function displayResults(movies) {
   const resultsDiv = document.getElementById('results');
   resultsDiv.innerHTML = '';
@@ -158,6 +213,7 @@ function displayResults(movies) {
     });
   }
   }
+  const YOUTUBE_API_KEY = "AIzaSyB5IyYCOW8FqAVDNCHEr5AAmYmDC4AOFxY; 
 </script>
 </body>
   </html>
