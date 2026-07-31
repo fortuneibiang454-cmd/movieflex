@@ -21,6 +21,15 @@ h2 { padding:10px 20px; margin:20px 0 0 0; }
 .card h4 { padding:10px; margin:0; font-size:14px; text-align:center; }
 #details { margin:20px; padding:20px; background:#222; border-radius:10px; display:none; }
 button { padding:10px 16px; background:#e50914; color:white; border:none; border-radius:5px; cursor:pointer; }
+                          .grid { 
+  display:grid; 
+  grid-template-columns:repeat(2, 1fr); /* 2 per row on phone */
+  gap:15px; 
+  padding:20px; 
+}
+@media(min-width: 768px) {
+  .grid { grid-template-columns:repeat(5, 1fr); } /* 5 per row on PC */
+       }
 </style>
 </head>
 <body>
