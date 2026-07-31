@@ -5,52 +5,97 @@
 <title>FortuneFlix</title>
 <style>
 body { background:#141414; color:white; font-family:Arial; margin:0; }
-header { display:flex; justify-content:space-between; padding:15px 20px; background:#222; }
-.logo { font-size:26px; color:#e50914; font-weight:bold; }
-.search-bar { text-align:center; padding:20px; background:#222; }
+header { display:flex; justify-content:space-between; align-items:center; padding:15px 20px; background:#222; }
+.logo { font-size:26px; color:#e50914; font-weight:bold; display:flex; align-items:center; gap:10px; }
+.search-bar { text-align:center; padding:15px; background:#222; }
 .search-bar input { width:70%; max-width:500px; padding:12px; border-radius:5px; border:none; font-size:16px; }
-.grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(160px, 1fr)); gap:15px; padding:20px; }
+.nav { display:flex; justify-content:center; gap:8px; padding:10px; flex-wrap:wrap; background:#222; }
+.nav button { background:#333; padding:8px 14px; border:none; color:white; border-radius:5px; cursor:pointer; }
+.nav button:hover { background:#e50914; }
+h2 { padding:10px 20px; margin:20px 0 0 0; }
+.grid { display:grid; grid-template-columns:repeat(2, 1fr); gap:15px; padding:20px; }
+@media(min-width: 768px) {.grid { grid-template-columns:repeat(5, 1fr); }
 .card { background:#222; border-radius:8px; cursor:pointer; }
-.card:hover { transform:scale(1.06); }
+.card:hover { transform:scale(1.05); }
 .card img { width:100%; height:240px; object-fit:cover; border-radius:8px 8px 0 0; }
 .card h4 { padding:10px; margin:0; font-size:14px; text-align:center; }
-button { padding:10px 16px; background:#e50914; color:white; border:none; border-radius:5px; cursor:pointer; }
 #details { margin:20px; padding:20px; background:#222; border-radius:10px; display:none; }
+button { padding:10px 16px; background:#e50914; color:white; border:none; border-radius:5px; cursor:pointer; }
 </style>
 </head>
 <body>
-<header><div class="logo">🎬 FORTUNEFLIX</div></header>
+<header>
+  <div class="logo">🎬 FORTUNEFLIX</div>
+  <button onclick="alert('Logout')">Logout</button>
+</header>
 
 <div class="search-bar">
   <input type="text" id="searchInput" placeholder="Type any movie name...">
   <button onclick="searchMovies()">Search</button>
 </div>
 
-<div id="results"></div>
+<div class="nav">
+  <button onclick="loadHomepage()">🏠 Home</button>
+  <button onclick="loadCategory('marvel')">🔥 Trending</button>
+  <button onclick="loadCategory('action')">Action</button>
+  <button onclick="loadCategory('comedy')">Comedy</button>
+  <button onclick="loadCategory('horror')">Horror</button>
+  <button onclick="loadCategory('anime')">Anime</button>
+</div>
+
+<div id="results">Loading movies...</div>
 <div id="details"></div>
 
 <script>
 const OMDB_API_KEY = "83909843";
 const YOUTUBE_API_KEY = "AIzaSyDs4dG_hfTD6yDCHRmwu-VfYWgCfj_Mwkw";
 
-async function searchMovies() {
-  const query = document.getElementById('searchInput').value;
-  if(!query) return alert("Type a movie name first");
-  document.getElementById('results').innerHTML = `<h2 style="padding:20px;">Searching for "${query}"...</h2><div class="grid" id="searchResults"></div>`;
-  document.getElementById('details').style.display = 'none';
-  
+// THIS LINE MAKES HOMEPAGE LOAD AUTOMATICALLY
+window.addEventListener('load', loadHomepage);
+
+async function fetchMovies(query, containerId) {
   const res = await fetch(`https://www.omdbapi.com/?s=${query}&apikey=${OMDB_API_KEY}`);
   const data = await res.json();
-  
-  const resultsDiv = document.getElementById('searchResults');
-  if(data.Search){
-    resultsDiv.innerHTML = '';
-    data.Search.forEach(movie => {
-      resultsDiv.innerHTML += `<div class="card" onclick="showMovieDetails('${movie.imdbID}')"><img src="${movie.Poster}"><h4>${movie.Title} (${movie.Year})</h4></div>`;
-    });
-  } else {
-    resultsDiv.innerHTML = '<p style="padding:20px;">No movies found. Try another name.</p>';
-  }
+  displayRow(data.Search, containerId);
+}
+
+async function loadHomepage() {
+  document.getElementById('results').innerHTML = `
+    <h2>🔥 Trending Now</h2><div class="grid" id="row1"></div>
+    <h2>⚡ Action Movies</h2><div class="grid" id="row2"></div>
+    <h2>😂 Comedy</h2><div class="grid" id="row3"></div>
+    <h2>👻 Horror</h2><div class="grid" id="row4"></div>
+  `;
+  document.getElementById('details').style.display = 'none';
+  fetchMovies('avengers', 'row1');
+  fetchMovies('action', 'row2');
+  fetchMovies('comedy', 'row3');
+  fetchMovies('horror', 'row4');
+}
+
+function loadCategory(query) {
+  document.getElementById('results').innerHTML = `<h2>Category: ${query}</h2><div class="grid" id="catResults"></div>`;
+  document.getElementById('details').style.display = 'none';
+  fetchMovies(query, 'catResults');
+}
+
+async function searchMovies() {
+  let query = document.getElementById('searchInput').value;
+  if(!query) return loadHomepage();
+  document.getElementById('results').innerHTML = `<h2>Results for "${query}"</h2><div class="grid" id="searchResults"></div>`;
+  const res = await fetch(`https://www.omdbapi.com/?s=${query}&apikey=${OMDB_API_KEY}`);
+  const data = await res.json();
+  displayRow(data.Search, 'searchResults');
+}
+
+function displayRow(movies, containerId) {
+  const resultsDiv = document.getElementById(containerId);
+  if(!resultsDiv) return;
+  if(!movies) { resultsDiv.innerHTML = '<p style="padding:20px;">No movies found</p>'; return; }
+  resultsDiv.innerHTML = '';
+  movies.slice(0,10).forEach(movie => {
+    resultsDiv.innerHTML += `<div class="card" onclick="showMovieDetails('${movie.imdbID}')"><img src="${movie.Poster}"><h4>${movie.Title}</h4></div>`;
+  });
 }
 
 async function showMovieDetails(imdbID) {
@@ -63,7 +108,7 @@ async function showMovieDetails(imdbID) {
     <p><b>⭐ ${movie.imdbRating}/10</b> | ${movie.Genre}</p>
     <p>${movie.Plot}</p>
     ${trailerId? `<button onclick="playTrailer('${trailerId}')">▶️ Watch Trailer</button>` : ''}
-    <div id="trailerPlayer" style="display:none;"><iframe id="trailerFrame" style="width:100%; height:350px; margin-top:15px;"></iframe></div>
+    <div id="trailerPlayer" style="display:none;"><iframe id="trailerFrame" style="width:100%; height:300px; margin-top:15px;"></iframe></div>
   `;
 }
 
