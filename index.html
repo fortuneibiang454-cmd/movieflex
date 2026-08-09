@@ -2,90 +2,255 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FortuneFlix</title>
+<title>FortuneFlix - Invest & Stream</title>
 <style>
 body { background:#141414; color:white; font-family:Arial; margin:0; }
-header { display:flex; justify-content:space-between; align-items:center; padding:15px 20px; background:#222; }
-.logo { font-size:26px; color:#e50914; font-weight:bold; display:flex; align-items:center; gap:10px; }
-.search-bar { text-align:center; padding:15px; background:#222; }
-.search-bar input { width:70%; max-width:500px; padding:12px; border-radius:5px; border:none; font-size:16px; }
-.nav { display:flex; justify-content:center; gap:8px; padding:10px; flex-wrap:wrap; background:#222; }
+header { display:flex; justify-content:space-between; align-items:center; padding:15px 20px; background:#000; position:sticky; top:0; z-index:100; }
+.logo { font-size:26px; color:#e50914; font-weight:bold; }
+.nav { display:flex; justify-content:center; gap:8px; padding:10px; flex-wrap:wrap; background:#111; }
 .nav button { background:#333; padding:8px 14px; border:none; color:white; border-radius:5px; cursor:pointer; }
 .nav button:hover { background:#e50914; }
+.search-bar { text-align:center; padding:15px; background:#111; }
+.search-bar input { width:70%; max-width:500px; padding:12px; border-radius:5px; border:none; font-size:16px; background:#222; color:white; }
 h2 { padding:10px 20px; margin:20px 0 0 0; }
 .grid { display:grid; grid-template-columns:repeat(2, 1fr); gap:15px; padding:20px; }
-@media(min-width: 768px) {.grid { grid-template-columns:repeat(5, 1fr); }
-.card { background:#222; border-radius:8px; cursor:pointer; }
+@media(min-width: 768px) {.grid { grid-template-columns:repeat(5, 1fr); }}
+.card { background:#222; border-radius:8px; cursor:pointer; transition:0.3s; }
 .card:hover { transform:scale(1.05); }
-.card img { width:100%; height:240px; object-fit:cover; border-radius:8px 8px 0 0; }
+img { width:100%; height:240px; object-fit:cover; border-radius:8px 8px 0 0; }
 .card h4 { padding:10px; margin:0; font-size:14px; text-align:center; }
+.vip-badge { background:#FFD700; color:#000; font-size:10px; padding:2px 6px; border-radius:4px; position:absolute; top:8px; right:8px; font-weight:bold; }
+.card { position:relative; }
 #details { margin:20px; padding:20px; background:#222; border-radius:10px; display:none; }
-button { padding:10px 16px; background:#e50914; color:white; border:none; border-radius:5px; cursor:pointer; }
-                          .grid { 
-  display:grid; 
-  grid-template-columns:repeat(2, 1fr); /* 2 per row on phone */
-  gap:15px; 
-  padding:20px; 
-}
-@media(min-width: 768px) {
-  .grid { grid-template-columns:repeat(5, 1fr); } /* 5 per row on PC */
-       }
+button { padding:10px 16px; background:#e50914; color:white; border:none; border-radius:5px; cursor:pointer; font-weight:bold; }
+button:hover { background:#b20710; }
+.invest-card { background:linear-gradient(135deg, #e50914, #000); }
+.plan-info { padding:10px; }
+.plan-info .roi { color:#00FF00; font-size:18px; font-weight:bold; }
+.subscription-box { background:#222; padding:20px; margin:20px; border-radius:10px; border:2px solid #e50914; }
+.opay-box { background:#000; padding:15px; border-radius:8px; margin-top:10px; }
+.modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:200; justify-content:center; align-items:center; }
+.modal-content { background:#222; padding:30px; border-radius:10px; max-width:500px; width:90%; }
+.close { float:right; font-size:28px; cursor:pointer; }
 </style>
 </head>
 <body>
 <header>
   <div class="logo">🎬 FORTUNEFLIX</div>
-  <button onclick="alert('Logout')">Logout</button>
+  <div>
+    <button onclick="showSubscribe()">💎 Subscribe ₦10,000</button>
+    <button onclick="alert('Login coming soon')">Login</button>
+  </div>
 </header>
 
 <div class="search-bar">
-  <input type="text" id="searchInput" placeholder="Type any movie name...">
+  <input type="text" id="searchInput" placeholder="Search movies, anime, or investment plans...">
   <button onclick="searchMovies()">Search</button>
 </div>
 
 <div class="nav">
   <button onclick="loadHomepage()">🏠 Home</button>
-  <button onclick="loadCategory('marvel')">🔥 Trending</button>
+  <button onclick="loadInvestment()">💰 Investment</button>
+  <button onclick="loadCategory('anime')">🔥 Anime</button>
   <button onclick="loadCategory('action')">Action</button>
-  <button onclick="loadCategory('comedy')">Comedy</button>
-  <button onclick="loadCategory('horror')">Horror</button>
-  <button onclick="loadCategory('anime')">Anime</button>
+  <button onclick="loadCategory('nollywood')">Nollywood</button>
+  <button onclick="loadCategory('hollywood')">Hollywood</button>
 </div>
 
-<div id="results">Loading movies...</div>
+<div id="results">Loading...</div>
 <div id="details"></div>
+
+<!-- SUBSCRIPTION MODAL -->
+<div id="subscribeModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeSubscribe()">&times;</span>
+    <h2>💎 VIP Subscription</h2>
+    <p>Unlock all movies, anime + Investment Dashboard</p>
+    <div class="subscription-box">
+      <h3>₦10,000 / $7 per Month</h3>
+      <p>Pay to this OPAY Account:</p>
+      <div class="opay-box">
+        <p><b>Bank:</b> OPAY</p>
+        <p><b>Account Number:</b> 9153369153</p>
+        <p><b>Account Name:</b> Fortune Ransome Ibiang</p>
+      </div>
+      <p style="margin-top:10px; font-size:12px; color:#aaa;">After payment, send screenshot to WhatsApp to get VIP access</p>
+      <button onclick="window.open('https://wa.me/')">Send Payment Proof</button>
+    </div>
+  </div>
+</div>
 
 <script>
 const OMDB_API_KEY = "83909843";
 const YOUTUBE_API_KEY = "AIzaSyDs4dG_hfTD6yDCHRmwu-VfYWgCfj_Mwkw";
 
-// THIS LINE MAKES HOMEPAGE LOAD AUTOMATICALLY
 window.addEventListener('load', loadHomepage);
+
+// YOUR 5 INVESTMENT PLANS - EDIT THIS
+const investmentPlans = [
+  {name: "Flex Starter", roi: "15%", days: "30 Days", min: "₦10,000", risk: "Low", img: "https://via.placeholder.com/200x300/FFD700/000?text=15%25+ROI"},
+  {name: "Flex Pro", roi: "30%", days: "90 Days", min: "₦50,000", risk: "Low", img: "https://via.placeholder.com/200x300/FF0000/FFF?text=30%25+ROI"},
+  {name: "Crypto Flex", roi: "45%", days: "60 Days", min: "₦100,000", risk: "High", img: "https://via.placeholder.com/200x300/00FF00/000?text=45%25+ROI"},
+  {name: "Forex Flex", roi: "20%", days: "30 Days", min: "₦20,000", risk: "Medium", img: "https://via.placeholder.com/200x300/0000FF/FFF?text=20%25+ROI"},
+  {name: "Real Esta<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FortuneFlix - Invest & Stream</title>
+<style>
+body { background:#141414; color:white; font-family:Arial; margin:0; }
+header { display:flex; justify-content:space-between; align-items:center; padding:15px 20px; background:#000; position:sticky; top:0; z-index:100; }
+.logo { font-size:26px; color:#e50914; font-weight:bold; }
+.nav { display:flex; justify-content:center; gap:8px; padding:10px; flex-wrap:wrap; background:#111; }
+.nav button { background:#333; padding:8px 14px; border:none; color:white; border-radius:5px; cursor:pointer; }
+.nav button:hover { background:#e50914; }
+.search-bar { text-align:center; padding:15px; background:#111; }
+.search-bar input { width:70%; max-width:500px; padding:12px; border-radius:5px; border:none; font-size:16px; background:#222; color:white; }
+h2 { padding:10px 20px; margin:20px 0 0 0; }
+.grid { display:grid; grid-template-columns:repeat(2, 1fr); gap:15px; padding:20px; }
+@media(min-width: 768px) {.grid { grid-template-columns:repeat(5, 1fr); }}
+.card { background:#222; border-radius:8px; cursor:pointer; transition:0.3s; }
+.card:hover { transform:scale(1.05); }
+.card img { width:100%; height:240px; object-fit:cover; border-radius:8px 8px 0 0; }
+.card h4 { padding:10px; margin:0; font-size:14px; text-align:center; }
+.vip-badge { background:#FFD700; color:#000; font-size:10px; padding:2px 6px; border-radius:4px; position:absolute; top:8px; right:8px; font-weight:bold; }
+.card { position:relative; }
+#details { margin:20px; padding:20px; background:#222; border-radius:10px; display:none; }
+button { padding:10px 16px; background:#e50914; color:white; border:none; border-radius:5px; cursor:pointer; font-weight:bold; }
+button:hover { background:#b20710; }
+.invest-card { background:linear-gradient(135deg, #e50914, #000); }
+.plan-info { padding:10px; }
+.plan-info .roi { color:#00FF00; font-size:18px; font-weight:bold; }
+.subscription-box { background:#222; padding:20px; margin:20px; border-radius:10px; border:2px solid #e50914; }
+.opay-box { background:#000; padding:15px; border-radius:8px; margin-top:10px; }
+.modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:200; justify-content:center; align-items:center; }
+.modal-content { background:#222; padding:30px; border-radius:10px; max-width:500px; width:90%; }
+.close { float:right; font-size:28px; cursor:pointer; }
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">🎬 FORTUNEFLIX</div>
+  <div>
+    <button onclick="showSubscribe()">💎 Subscribe ₦10,000</button>
+    <button onclick="alert('Login coming soon')">Login</button>
+  </div>
+</header>
+
+<div class="search-bar">
+  <input type="text" id="searchInput" placeholder="Search movies, anime, or investment plans...">
+  <button onclick="searchMovies()">Search</button>
+</div>
+
+<div class="nav">
+  <button onclick="loadHomepage()">🏠 Home</button>
+  <button onclick="loadInvestment()">💰 Investment</button>
+  <button onclick="loadCategory('anime')">🔥 Anime</button>
+  <button onclick="loadCategory('action')">Action</button>
+  <button onclick="loadCategory('nollywood')">Nollywood</button>
+  <button onclick="loadCategory('hollywood')">Hollywood</button>
+</div>
+
+<div id="results">Loading...</div>
+<div id="details"></div>
+
+<!-- SUBSCRIPTION MODAL -->
+<div id="subscribeModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeSubscribe()">&times;</span>
+    <h2>💎 VIP Subscription</h2>
+    <p>Unlock all movies, anime + Investment Dashboard</p>
+    <div class="subscription-box">
+      <h3>₦10,000 / $7 per Month</h3>
+      <p>Pay to this OPAY Account:</p>
+      <div class="opay-box">
+        <p><b>Bank:</b> OPAY</p>
+        <p><b>Account Number:</b> 9153369153</p>
+        <p><b>Account Name:</b> Fortune Ransome Ibiang</p>
+      </div>
+      <p style="margin-top:10px; font-size:12px; color:#aaa;">After payment, send screenshot to WhatsApp to get VIP access</p>
+      <button onclick="window.open('https://wa.me/')">Send Payment Proof</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const OMDB_API_KEY = "83909843";
+const YOUTUBE_API_KEY = "AIzaSyDs4dG_hfTD6yDCHRmwu-VfYWgCfj_Mwkw";
+
+window.addEventListener('load', loadHomepage);
+
+// YOUR 5 INVESTMENT PLANS - EDIT THIS
+const investmentPlans = [
+  {name: "Flex Starter", roi: "15%", days: "30 Days", min: "₦10,000", risk: "Low", img: "https://via.placeholder.com/200x300/FFD700/000?text=15%25+ROI"},
+  {name: "Flex Pro", roi: "30%", days: "90 Days", min: "₦50,000", risk: "Low", img: "https://via.placeholder.com/200x300/FF0000/FFF?text=30%25+ROI"},
+  {name: "Crypto Flex", roi: "45%", days: "60 Days", min: "₦100,000", risk: "High", img: "https://via.placeholder.com/200x300/00FF00/000?text=45%25+ROI"},
+  {name: "Forex Flex", roi: "20%", days: "30 Days", min: "₦20,000", risk: "Medium", img: "https://via.placeholder.com/200x300/0000FF/FFF?text=20%25+ROI"},
+  {name: "Real Estate Flex", roi: "50%", days: "120 Days", min: "₦200,000", risk: "Medium", img: "https://via.placeholder.com/200x300/800080/FFF?text=50%25+ROI"}
+];
+
+function loadHomepage() {
+  document.getElementById('results').innerHTML = `
+    <h2>🔥 Trending Investment Plans</h2><div class="grid" id="investRow"></div>
+    <h2>🎬 Trending Movies</h2><div class="grid" id="row1"></div>
+    <h2>⚡ Action Movies</h2><div class="grid" id="row2"></div>
+    <h2>📺 Anime VIP</h2><div class="grid" id="animeRow"></div>
+  `;
+  document.getElementById('details').style.display = 'none';
+  loadInvestmentCards();
+  fetchMovies('avengers', 'row1');
+  fetchMovies('action', 'row2');
+  fetchMovies('solo leveling', 'animeRow'); // Solo Leveling auto
+}
+
+function loadInvestment() {
+  document.getElementById('results').innerHTML = `<h2>💰 All Investment Plans</h2><div class="grid" id="allInvest"></div>`;
+  document.getElementById('details').style.display = 'none';
+  loadInvestmentCards('allInvest');
+}
+
+function loadInvestmentCards(containerId = 'investRow') {
+  const div = document.getElementById(containerId);
+  div.innerHTML = '';
+  investmentPlans.forEach(plan => {
+    div.innerHTML += `
+      <div class="card invest-card" onclick="showPlanDetails('${plan.name}')">
+        <img src="${plan.img}">
+        <div class="plan-info">
+          <h4>${plan.name}</h4>
+          <p class="roi">${plan.roi} in ${plan.days}</p>
+          <p style="font-size:12px;">Min: ${plan.min} | ${plan.risk} Risk</p>
+        </div>
+      </div>
+    `;
+  });
+}
+
+function showPlanDetails(name) {
+  const plan = investmentPlans.find(p => p.name === name);
+  document.getElementById('details').style.display = 'block';
+  document.getElementById('details').innerHTML = `
+    <h2>${plan.name}</h2>
+    <p><b>Return:</b> ${plan.roi}</p>
+    <p><b>Duration:</b> ${plan.days}</p>
+    <p><b>Minimum:</b> ${plan.min}</p>
+    <p><b>Risk:</b> ${plan.risk}</p>
+    <p>Click below to invest. You will be redirected to pay to OPAY.</p>
+    <button onclick="showSubscribe()">Invest Now</button>
+  `;
+  window.scrollTo(0, document.getElementById('details').offsetTop);
+}
 
 async function fetchMovies(query, containerId) {
   const res = await fetch(`https://www.omdbapi.com/?s=${query}&apikey=${OMDB_API_KEY}`);
   const data = await res.json();
-  displayRow(data.Search, containerId);
-}
-
-async function loadHomepage() {
-  document.getElementById('results').innerHTML = `
-    <h2>🔥 Trending Now</h2><div class="grid" id="row1"></div>
-    <h2>⚡ Action Movies</h2><div class="grid" id="row2"></div>
-    <h2>😂 Comedy</h2><div class="grid" id="row3"></div>
-    <h2>👻 Horror</h2><div class="grid" id="row4"></div>
-  `;
-  document.getElementById('details').style.display = 'none';
-  fetchMovies('avengers', 'row1');
-  fetchMovies('action', 'row2');
-  fetchMovies('comedy', 'row3');
-  fetchMovies('horror', 'row4');
+  displayMovies(data.Search, containerId, query === 'solo leveling');
 }
 
 function loadCategory(query) {
   document.getElementById('results').innerHTML = `<h2>Category: ${query}</h2><div class="grid" id="catResults"></div>`;
   document.getElementById('details').style.display = 'none';
-  fetchMovies(query, 'catResults');
+  fetchMovies(query, 'catResults', query === 'anime');
 }
 
 async function searchMovies() {
@@ -94,20 +259,31 @@ async function searchMovies() {
   document.getElementById('results').innerHTML = `<h2>Results for "${query}"</h2><div class="grid" id="searchResults"></div>`;
   const res = await fetch(`https://www.omdbapi.com/?s=${query}&apikey=${OMDB_API_KEY}`);
   const data = await res.json();
-  displayRow(data.Search, 'searchResults');
+  displayMovies(data.Search, 'searchResults', false);
 }
 
-function displayRow(movies, containerId) {
+function displayMovies(movies, containerId, isVIP) {
   const resultsDiv = document.getElementById(containerId);
   if(!resultsDiv) return;
   if(!movies) { resultsDiv.innerHTML = '<p style="padding:20px;">No movies found</p>'; return; }
   resultsDiv.innerHTML = '';
   movies.slice(0,10).forEach(movie => {
-    resultsDiv.innerHTML += `<div class="card" onclick="showMovieDetails('${movie.imdbID}')"><img src="${movie.Poster}"><h4>${movie.Title}</h4></div>`;
+    resultsDiv.innerHTML += `
+      <div class="card" onclick="showMovieDetails('${movie.imdbID}', ${isVIP})">
+        <img src="${movie.Poster}">
+        ${isVIP ? '<span class="vip-badge">VIP</span>' : ''}
+        <h4>${movie.Title}</h4>
+      </div>
+    `;
   });
 }
 
-async function showMovieDetails(imdbID) {
+async function showMovieDetails(imdbID, isVIP) {
+  if(isVIP) {
+    alert('🔒 This is VIP content. Subscribe for ₦10,000 to watch.');
+    showSubscribe();
+    return;
+  }
   const res = await fetch(`https://www.omdbapi.com/?i=${imdbID}&apikey=${OMDB_API_KEY}`);
   const movie = await res.json();
   const trailerId = await getTrailer(movie.Title);
@@ -119,6 +295,7 @@ async function showMovieDetails(imdbID) {
     ${trailerId? `<button onclick="playTrailer('${trailerId}')">▶️ Watch Trailer</button>` : ''}
     <div id="trailerPlayer" style="display:none;"><iframe id="trailerFrame" style="width:100%; height:300px; margin-top:15px;"></iframe></div>
   `;
+  window.scrollTo(0, document.getElementById('details').offsetTop);
 }
 
 async function getTrailer(title) {
@@ -132,7 +309,42 @@ function playTrailer(videoId) {
   document.getElementById('trailerFrame').src = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
 }
 
+function showSubscribe() {
+  document.getElementById('subscribeModal').style.display = 'flex';
+}
+function closeSubscribe() {
+  document.getElementById('subscribeModal').style.display = 'none';
+}
+
 document.getElementById('searchInput').addEventListener('keypress', e => { if(e.key === 'Enter') searchMovies(); });
 </script>
 </body>
-</html>
+</html>￼Enterte Flex", roi: "50%", days: "120 Days", min: "₦200,000", risk: "Medium", img: "https://via.placeholder.com/200x300/800080/FFF?text=50%25+ROI"}
+];
+
+function loadHomepage() {
+  document.getElementById('results').innerHTML = `
+    <h2>🔥 Trending Investment Plans</h2><div class="grid" id="investRow"></div>
+    <h2>🎬 Trending Movies</h2><div class="grid" id="row1"></div>
+    <h2>⚡ Action Movies</h2><div class="grid" id="row2"></div>
+    <h2>📺 Anime VIP</h2><div class="grid" id="animeRow"></div>
+  `;
+  document.getElementById('details').style.display = 'none';
+  loadInvestmentCards();
+  fetchMovies('avengers', 'row1');
+  fetchMovies('action', 'row2');
+  fetchMovies('solo leveling', 'animeRow'); // Solo Leveling auto
+}
+
+function loadInvestment() {
+  document.getElementById('results').innerHTML = `<h2>💰 All Investment Plans</h2><div class="grid" id="allInvest"></div>`;
+  document.getElementById('details').style.display = 'none';
+  loadInvestmentCards('allInvest');
+}
+
+function loadInvestmentCards(containerId = 'investRow') {
+  const div = document.getElementById(containerId);
+  div.innerHTML = '';
+  investmentPlans.forEach(plan => {
+    div.innerHTML += `
+      <div class="card invest-card" onclick="showPlanDetails('${plan.name}')">
