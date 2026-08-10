@@ -1,0 +1,16 @@
+{
+  "name": "FortuneFlix",
+  "short_name": "FortuneFlix",
+  "description": "Watch VIP movies + Invest and earn weekly on FortuneFlix",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0b0b0b",
+  "theme_color": "#E50914",
+  "icons": [
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
