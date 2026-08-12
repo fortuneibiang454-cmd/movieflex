@@ -8,6 +8,9 @@
 body { background:#141414; color:white; font-family:Arial; margin:0; }
 header { display:flex; justify-content:space-between; align-items:center; padding:15px 20px; background:#000; position:sticky; top:0; z-index:100; }
 .logo { font-size:26px; color:#e50914; font-weight:bold; }
+.auth-controls { display:flex; gap:8px; align-items:center; }
+.auth-controls input { padding:6px; border-radius:4px; border:none; background:#222; color:white; width:120px; }
+.auth-controls button { padding:8px 12px; font-size:12px; }
 .nav { display:flex; justify-content:center; gap:8px; padding:10px; flex-wrap:wrap; background:#111; }
 .nav button { background:#333; padding:8px 14px; border:none; color:white; border-radius:5px; cursor:pointer; }
 .nav button:hover { background:#e50914; }
@@ -32,14 +35,23 @@ button:hover { background:#b20710; }
 .modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:200; justify-content:center; align-items:center; }
 .modal-content { background:#222; padding:30px; border-radius:10px; max-width:500px; width:90%; }
 .close { float:right; font-size:28px; cursor:pointer; }
+#userEmail { font-size:12px; color:#aaa; }
 </style>
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 </head>
 <body>
 <header>
   <div class="logo">🎬 FORTUNEFLIX</div>
-  <div>
-    <button onclick="showSubscribe()">💎 Subscribe ₦10,000</button>
-    <button onclick="alert('Login coming soon')">Login</button>
+  <div class="auth-controls" id="authControls">
+    <input type="email" id="email" placeholder="Email">
+    <input type="password" id="password" placeholder="Password">
+    <button onclick="signup()">Sign Up</button>
+    <button onclick="login()">Login</button>
+    <button onclick="logout()" id="logoutBtn" style="display:none;">Logout</button>
+    <span id="userEmail"></span>
   </div>
 </header>
 
@@ -50,7 +62,7 @@ button:hover { background:#b20710; }
 
 <div class="nav">
   <button onclick="loadHomepage()">🏠 Home</button>
-  <button onclick="loadInvestment()">💰 Investment</button>
+  <button onclick="checkAuthThen(loadInvestment)">💰 Investment</button>
   <button onclick="loadCategory('anime')">🔥 Anime</button>
   <button onclick="loadCategory('action')">Action</button>
   <button onclick="loadCategory('nollywood')">Nollywood</button>
@@ -79,6 +91,67 @@ button:hover { background:#b20710; }
 </div>
 
 <script>
+// ===== FIREBASE CONFIG =====
+const firebaseConfig = {
+  apiKey: "AIzaSyALp9SbNRfarY1u80zoGIbGgOt-k-2KGLw",
+  authDomain: "fortuneflex.firebaseapp.com",
+  projectId: "fortuneflex",
+  storageBucket: "fortuneflex.firebasestorage.app",
+  messagingSenderId: "869550247929",
+  appId: "1:869550247929:web:936ea93191c909b619b728",
+  measurementId: "G-XDLJYT8JM7"
+};
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+
+let currentUser = null;
+
+// Track login state
+auth.onAuthStateChanged(user => {
+  currentUser = user;
+  if(user){
+    document.getElementById('userEmail').innerText = "Hi " + user.email.split('@')[0];
+    document.getElementById('logoutBtn').style.display = "inline";
+    document.getElementById('email').style.display = "none";
+    document.getElementById('password').style.display = "none";
+  } else {
+    document.getElementById('userEmail').innerText = "";
+    document.getElementById('logoutBtn').style.display = "none";
+    document.getElementById('email').style.display = "inline";
+    document.getElementById('password').style.display = "inline";
+  }
+});
+
+function signup() {
+  const email = document.getElementById('email').value;
+  const password = document.getElementById('password').value;
+  if(!email || !password) return alert("Enter email and password");
+  auth.createUserWithEmailAndPassword(email, password)
+    .then(() => alert("Account created! You're logged in"))
+    .catch(err => alert(err.message));
+}
+
+function login() {
+  const email = document.getElementById('email').value;
+  const password = document.getElementById('password').value;
+  auth.signInWithEmailAndPassword(email, password)
+    .then(() => alert("Logged in!"))
+    .catch(err => alert(err.message));
+}
+
+function logout() {
+  auth.signOut();
+}
+
+function checkAuthThen(callback){
+  if(!currentUser){
+    alert("🔒 Please login to access this");
+    return;
+  }
+  callback();
+}
+
+// ===== YOUR EXISTING CODE =====
 const OMDB_API_KEY = "83909843";
 const YOUTUBE_API_KEY = "AIzaSyDs4dG_hfTD6yDCHRmwu-VfYWgCfj_Mwkw";
 
@@ -187,8 +260,8 @@ function displayMovies(movies, containerId, isVIP) {
 }
 
 async function showMovieDetails(imdbID, isVIP) {
-  if(isVIP) {
-    alert('🔒 This is VIP content. Subscribe for ₦10,000 to watch.');
+  if(isVIP && !currentUser) {
+    alert('🔒 This is VIP content. Login + Subscribe to watch.');
     showSubscribe();
     return;
   }
@@ -227,4 +300,4 @@ function closeSubscribe() {
 document.getElementById('searchInput').addEventListener('keypress', e => { if(e.key === 'Enter') searchMovies(); });
 </script>
 </body>
-</html>
+  </html>
