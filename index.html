@@ -9,7 +9,6 @@ body { background:#141414; color:white; font-family:Arial; margin:0; }
 header { display:flex; justify-content:space-between; align-items:center; padding:15px 20px; background:#000; position:sticky; top:0; z-index:100; }
 .logo { font-size:26px; color:#e50914; font-weight:bold; }
 .auth-controls { display:flex; gap:8px; align-items:center; }
-.auth-controls input { padding:6px; border-radius:4px; border:none; background:#222; color:white; width:120px; }
 .auth-controls button { padding:8px 12px; font-size:12px; }
 .nav { display:flex; justify-content:center; gap:8px; padding:10px; flex-wrap:wrap; background:#111; }
 .nav button { background:#333; padding:8px 14px; border:none; color:white; border-radius:5px; cursor:pointer; }
@@ -36,22 +35,127 @@ button:hover { background:#b20710; }
 .modal-content { background:#222; padding:30px; border-radius:10px; max-width:500px; width:90%; }
 .close { float:right; font-size:28px; cursor:pointer; }
 #userEmail { font-size:12px; color:#aaa; }
+
+/* LOGIN SCREEN STYLES */
+#loginScreen { display:flex; justify-content:center; align-items:center; height:100vh; background:linear-gradient(135deg,#000,#141414); }
+.login-box { background:#222; padding:40px; border-radius:10px; text-align:center; width:90%; max-width:400px; border:2px solid #e50914; }
+.login-box input { width:100%; padding:12px; margin:10px 0; background:#333; border:none; border-radius:5px; color:white; font-size:16px; box-sizing:border-box; }
+.login-box button { width:100%; margin-top:10px; padding:12px; font-size:16px; }
+.hidden { display:none !important; }
 </style>
 
-<!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 </head>
 <body>
+
+<!-- LOGIN SCREEN - SHOWS FIRST -->
+<div id="loginScreen">
+  <div class="login-box">
+    <h1 style="color:#e50914; margin-bottom:5px;">🎬 FORTUNEFLIX</h1>
+    <p style="margin-bottom:20px; color:#aaa;">Invest & Stream</p>
+    <h2>Login to Continue</h2>
+    <input type="email" id="loginEmail" placeholder="Enter Email">
+    <input type="password" id="loginPassword" placeholder="Enter Password">
+    <button onclick="login()">Login</button>
+    <button onclick="signup()" style="background:#333;">Create Account</button>
+    <p id="loginError" style="color:red; font-size:12px; margin-top:10px;"></p>
+  </div>
+</div>
+
+<!-- MAIN APP - HIDDEN UNTIL LOGIN -->
+<div id="mainApp" class="hidden">
 <header>
   <div class="logo">🎬 FORTUNEFLIX</div>
-  <div class="auth-controls" id="authControls">
-    <input type="email" id="email" placeholder="Email">
-    <input type="password" id="password" placeholder="Password">
-    <button onclick="signup()">Sign Up</button>
-    <button onclick="login()">Login</button>
-    <button onclick="logout()" id="logoutBtn" style="display:none;">Logout</button>
+  <div class="auth-controls">
     <span id="userEmail"></span>
+    <button onclick="showSubscribe()">💎 Subscribe</button>
+    <button onclick="logout()">Logout</button>
+  </div>
+</header>
+
+<div class="search-bar">
+ut type="text" id="searchInput" placeholder="Search movies, anime, or investment plans...">
+  <button onclick="searchMovies()">Search</button>
+</div>
+
+<div class="nav">
+  <button onclick="loadHomepage()">🏠 Home</button>
+  <button onclick="loadInvestment()">💰 Investment</button>
+  <button onclick="loadCategory('anime')">🔥 Anime</button>
+  <button oncl<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FortuneFlix - Invest & Stream</title>
+<style>
+body { background:#141414; color:white; font-family:Arial; margin:0; }
+header { display:flex; justify-content:space-between; align-items:center; padding:15px 20px; background:#000; position:sticky; top:0; z-index:100; }
+.logo { font-size:26px; color:#e50914; font-weight:bold; }
+.auth-controls { display:flex; gap:8px; align-items:center; }
+.auth-controls button { padding:8px 12px; font-size:12px; }
+.nav { display:flex; justify-content:center; gap:8px; padding:10px; flex-wrap:wrap; background:#111; }
+.nav button { background:#333; padding:8px 14px; border:none; color:white; border-radius:5px; cursor:pointer; }
+.nav button:hover { background:#e50914; }
+.search-bar { text-align:center; padding:15px; background:#111; }
+.search-bar input { width:70%; max-width:500px; padding:12px; border-radius:5px; border:none; font-size:16px; background:#222; color:white; }
+h2 { padding:10px 20px; margin:20px 0 0 0; }
+.grid { display:grid; grid-template-columns:repeat(2, 1fr); gap:15px; padding:20px; }
+@media(min-width: 768px) {.grid { grid-template-columns:repeat(5, 1fr); }}
+.card { background:#222; border-radius:8px; cursor:pointer; transition:0.3s; position:relative; }
+.card:hover { transform:scale(1.05); }
+.card img { width:100%; height:240px; object-fit:cover; border-radius:8px 8px 0 0; }
+.card h4 { padding:10px; margin:0; font-size:14px; text-align:center; }
+.vip-badge { background:#FFD700; color:#000; font-size:10px; padding:2px 6px; border-radius:4px; position:absolute; top:8px; right:8px; font-weight:bold; }
+#details { margin:20px; padding:20px; background:#222; border-radius:10px; display:none; }
+button { padding:10px 16px; background:#e50914; color:white; border:none; border-radius:5px; cursor:pointer; font-weight:bold; }
+button:hover { background:#b20710; }
+.invest-card { background:linear-gradient(135deg, #e50914, #000); }
+.plan-info { padding:10px; }
+.plan-info .roi { color:#00FF00; font-size:18px; font-weight:bold; }
+.subscription-box { background:#222; padding:20px; margin:20px; border-radius:10px; border:2px solid #e50914; }
+.opay-box { background:#000; padding:15px; border-radius:8px; margin-top:10px; }
+.modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:200; justify-content:center; align-items:center; }
+.modal-content { background:#222; padding:30px; border-radius:10px; max-width:500px; width:90%; }
+.close { float:right; font-size:28px; cursor:pointer; }
+#userEmail { font-size:12px; color:#aaa; }
+
+/* LOGIN SCREEN STYLES */
+#loginScreen { display:flex; justify-content:center; align-items:center; height:100vh; background:linear-gradient(135deg,#000,#141414); }
+.login-box { background:#222; padding:40px; border-radius:10px; text-align:center; width:90%; max-width:400px; border:2px solid #e50914; }
+.login-box input { width:100%; padding:12px; margin:10px 0; background:#333; border:none; border-radius:5px; color:white; font-size:16px; box-sizing:border-box; }
+.login-box button { width:100%; margin-top:10px; padding:12px; font-size:16px; }
+.hidden { display:none !important; }
+</style>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+</head>
+<body>
+
+<!-- LOGIN SCREEN - SHOWS FIRST -->
+<div id="loginScreen">
+  <div class="login-box">
+    <h1 style="color:#e50914; margin-bottom:5px;">🎬 FORTUNEFLIX</h1>
+    <p style="margin-bottom:20px; color:#aaa;">Invest & Stream</p>
+    <h2>Login to Continue</h2>
+    <input type="email" id="loginEmail" placeholder="Enter Email">
+    <input type="password" id="loginPassword" placeholder="Enter Password">
+    <button onclick="login()">Login</button>
+    <button onclick="signup()" style="background:#333;">Create Account</button>
+    <p id="loginError" style="color:red; font-size:12px; margin-top:10px;"></p>
+  </div>
+</div>
+
+<!-- MAIN APP - HIDDEN UNTIL LOGIN -->
+<div id="mainApp" class="hidden">
+<header>
+  <div class="logo">🎬 FORTUNEFLIX</div>
+  <div class="auth-controls">
+    <span id="userEmail"></span>
+    <button onclick="showSubscribe()">💎 Subscribe</button>
+    <button onclick="logout()">Logout</button>
   </div>
 </header>
 
@@ -62,7 +166,7 @@ button:hover { background:#b20710; }
 
 <div class="nav">
   <button onclick="loadHomepage()">🏠 Home</button>
-  <button onclick="checkAuthThen(loadInvestment)">💰 Investment</button>
+  <button onclick="loadInvestment()">💰 Investment</button>
   <button onclick="loadCategory('anime')">🔥 Anime</button>
   <button onclick="loadCategory('action')">Action</button>
   <button onclick="loadCategory('nollywood')">Nollywood</button>
@@ -89,6 +193,7 @@ button:hover { background:#b20710; }
     </div>
   </div>
 </div>
+</div>
 
 <script>
 // ===== FIREBASE CONFIG =====
@@ -104,64 +209,43 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 
-let currentUser = null;
-
-// Track login state
+// Show/Hide screens based on login
 auth.onAuthStateChanged(user => {
-  currentUser = user;
   if(user){
+    document.getElementById('loginScreen').classList.add('hidden');
+    document.getElementById('mainApp').classList.remove('hidden');
     document.getElementById('userEmail').innerText = "Hi " + user.email.split('@')[0];
-    document.getElementById('logoutBtn').style.display = "inline";
-    document.getElementById('email').style.display = "none";
-    document.getElementById('password').style.display = "none";
+    loadHomepage(); // Load homepage after login
   } else {
-    document.getElementById('userEmail').innerText = "";
-    document.getElementById('logoutBtn').style.display = "none";
-    document.getElementById('email').style.display = "inline";
-    document.getElementById('password').style.display = "inline";
+    document.getElementById('loginScreen').classList.remove('hidden');
+    document.getElementById('mainApp').classList.add('hidden');
   }
 });
 
 function signup() {
-  const email = document.getElementById('email').value;
-  const password = document.getElementById('password').value;
-  if(!email || !password) return alert("Enter email and password");
+  const email = document.getElementById('loginEmail').value;
+  const password = document.getElementById('loginPassword').value;
+  document.getElementById('loginError').innerText = "";
+  if(!email || !password) return document.getElementById('loginError').innerText = "Please enter email and password";
   auth.createUserWithEmailAndPassword(email, password)
-    .then(() => alert("Account created! You're logged in"))
-    .catch(err => alert(err.message));
+    .catch(err => document.getElementById('loginError').innerText = err.message);
 }
 
 function login() {
-  const email = document.getElementById('email').value;
-  const password = document.getElementById('password').value;
+  const email = document.getElementById('loginEmail').value;
+  const password = document.getElementById('loginPassword').value;
+  document.getElementById('loginError').innerText = "";
   auth.signInWithEmailAndPassword(email, password)
-    .then(() => alert("Logged in!"))
-    .catch(err => alert(err.message));
+    .catch(err => document.getElementById('loginError').innerText = err.message);
 }
 
 function logout() {
   auth.signOut();
 }
 
-function checkAuthThen(callback){
-  if(!currentUser){
-    alert("🔒 Please login to access this");
-    return;
-  }
-  callback();
-}
-
 // ===== YOUR EXISTING CODE =====
 const OMDB_API_KEY = "83909843";
 const YOUTUBE_API_KEY = "AIzaSyDs4dG_hfTD6yDCHRmwu-VfYWgCfj_Mwkw";
-
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('sw.js');
-  });
-}
-
-window.addEventListener('load', loadHomepage);
 
 const investmentPlans = [
   {name: "Flex Starter", roi: "15%", days: "30 Days", min: "₦10,000", risk: "Low", img: "https://via.placeholder.com/200x300/FFD700/000?text=15%25+ROI"},
@@ -260,8 +344,8 @@ function displayMovies(movies, containerId, isVIP) {
 }
 
 async function showMovieDetails(imdbID, isVIP) {
-  if(isVIP && !currentUser) {
-    alert('🔒 This is VIP content. Login + Subscribe to watch.');
+  if(isVIP) {
+    alert('🔒 This is VIP content. Subscribe for ₦10,000 to watch.');
     showSubscribe();
     return;
   }
@@ -274,7 +358,7 @@ async function showMovieDetails(imdbID, isVIP) {
     <p><b>⭐ ${movie.imdbRating}/10</b> | ${movie.Genre}</p>
     <p>${movie.Plot}</p>
     ${trailerId? `<button onclick="playTrailer('${trailerId}')">▶️ Watch Trailer</button>` : ''}
-    <div id="trailerPlayer" style="display:none;"><iframe id="trailerFrame" style="width:100%; height:300px; margin-top:15px;"></iframe></div>
+    <div id="trailerPlayer" style="display:none;"><iframe id="trailerFrame" style="width:100%; height:300px; margin-top:15px; border:none;"></iframe></div>
   `;
   window.scrollTo(0, document.getElementById('details').offsetTop);
 }
@@ -297,7 +381,110 @@ function closeSubscribe() {
   document.getElementById('subscribeModal').style.display = 'none';
 }
 
-document.getElementById('searchInput').addEventListener('keypress', e => { if(e.key === 'Enter') searchMovies(); });
+document.getElementById('searchInput')?.addEventListener('keypress', e => { if(e.key === 'Enter') searchMovies(); });
 </script>
 </body>
-  </html>
+</html>￼Enterick="loadCategory('action')">Action</button>
+  <button onclick="loadCategory('nollywood')">Nollywood</button>
+  <button onclick="loadCategory('hollywood')">Hollywood</button>
+</div>
+
+<div id="results">Loading...</div>
+<div id="details"></div>
+
+<div id="subscribeModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeSubscribe()">&times;</span>
+    <h2>💎 VIP Subscription</h2>
+    <p>Unlock all movies, anime + Investment Dashboard</p>
+    <div class="subscription-box">
+      <h3>₦10,000 / $7 per Month</h3>
+      <p>Pay to this OPAY Account:</p>
+      <div class="opay-box">
+        <p><b>Bank:</b> OPAY</p>
+        <p><b>Account Number:</b> 9153369153</p>
+        <p><b>Account Name:</b> Fortune Ransome Ibiang</p>
+      </div>
+      <p style="margin-top:10px; font-size:12px; color:#aaa;">After payment, send screenshot to WhatsApp to get VIP access</p>
+    </div>
+  </div>
+</div>
+</div>
+
+<script>
+// ===== FIREBASE CONFIG =====
+const firebaseConfig = {
+  apiKey: "AIzaSyALp9SbNRfarY1u80zoGIbGgOt-k-2KGLw",
+  authDomain: "fortuneflex.firebaseapp.com",
+  projectId: "fortuneflex",
+  storageBucket: "fortuneflex.firebasestorage.app",
+  messagingSenderId: "869550247929",
+  appId: "1:869550247929:web:936ea93191c909b619b728",
+  measurementId: "G-XDLJYT8JM7"
+};
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+
+// Show/Hide screens based on login
+auth.onAuthStateChanged(user => {
+  if(user){
+    document.getElementById('loginScreen').classList.add('hidden');
+    document.getElementById('mainApp').classList.remove('hidden');
+    document.getElementById('userEmail').innerText = "Hi " + user.email.split('@')[0];
+    loadHomepage(); // Load homepage after login
+  } else {
+    document.getElementById('loginScreen').classList.remove('hidden');
+    document.getElementById('mainApp').classList.add('hidden');
+  }
+});
+
+function signup() {
+  const email = document.getElementById('loginEmail').value;
+  const password = document.getElementById('loginPassword').value;
+  document.getElementById('loginError').innerText = "";
+  if(!email || !password) return document.getElementById('loginError').innerText = "Please enter email and password";
+  auth.createUserWithEmailAndPassword(email, password)
+    .catch(err => document.getElementById('loginError').innerText = err.message);
+}
+
+function login() {
+  const email = document.getElementById('loginEmail').value;
+  const password = document.getElementById('loginPassword').value;
+  document.getElementById('loginError').innerText = "";
+  auth.signInWithEmailAndPassword(email, password)
+    .catch(err => document.getElementById('loginError').innerText = err.message);
+}
+
+function logout() {
+  auth.signOut();
+}
+
+// ===== YOUR EXISTING CODE =====
+const OMDB_API_KEY = "83909843";
+const YOUTUBE_API_KEY = "AIzaSyDs4dG_hfTD6yDCHRmwu-VfYWgCfj_Mwkw";
+
+const investmentPlans = [
+  {name: "Flex Starter", roi: "15%", days: "30 Days", min: "₦10,000", risk: "Low", img: "https://via.placeholder.com/200x300/FFD700/000?text=15%25+ROI"},
+  {name: "Flex Pro", roi: "30%", days: "90 Days", min: "₦50,000", risk: "Low", img: "https://via.placeholder.com/200x300/FF0000/FFF?text=30%25+ROI"},
+  {name: "Crypto Flex", roi: "45%", days: "60 Days", min: "₦100,000", risk: "High", img: "https://via.placeholder.com/200x300/00FF00/000?text=45%25+ROI"},
+  {name: "Forex Flex", roi: "20%", days: "30 Days", min: "₦20,000", risk: "Medium", img: "https://via.placeholder.com/200x300/0000FF/FFF?text=20%25+ROI"},
+  {name: "Real Estate Flex", roi: "50%", days: "120 Days", min: "₦200,000", risk: "Medium", img: "https://via.placeholder.com/200x300/800080/FFF?text=50%25+ROI"}
+];
+
+function loadHomepage() {
+  document.getElementById('results').innerHTML = `
+    <h2>🔥 Trending Investment Plans</h2><div class="grid" id="investRow"></div>
+    <h2>🎬 Trending Movies</h2><div class="grid" id="row1"></div>
+    <h2>⚡ Action Movies</h2><div class="grid" id="row2"></div>
+    <h2>📺 Anime VIP</h2><div class="grid" id="animeRow"></div>
+  `;
+  document.getElementById('details').style.display = 'none';
+  loadInvestmentCards();
+  fetchMovies('avengers', 'row1');
+  fetchMovies('action', 'row2');
+  fetchMovies('solo leveling', 'animeRow');
+}
+
+function loadInvestment() {
+  document.getElementById('results').innerHTML = `<h2>💰 All Investment Plans</h2><div class="grid" id="allInvest"></div>`;
+  document.getElementById('details').style.display = 'none';
